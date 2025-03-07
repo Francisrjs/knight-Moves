@@ -4,41 +4,32 @@
 // } else {
 //     console.log("Debes proporcionar exactamente dos números.");
 // }
+import Node from "./node.js";
 
 
-function knightMoves(coords1,coords2){
-if (!coordIsValid(coords1) || !coordIsValid(coords2))
-    return;
+function knightMoves(start,end){
+    if (!coordIsValid(start) || !coordIsValid(end))
+        return "coordenadas Invalidas";
 
-let visitedCords=[coords1];
-}
-function diffCords(coords1,coords2){
-let coordsX=coords2[0]-coords1[0];
-let coordsY=coords2[1]-coords1[1];
-return [coordsX,coordsY];
-}
-function move(coords1,coords2){
-    let init=posibilites(coords1);
-    let nearbyCoods=posibilites(coords2); 
-    let diff=diffCords(coords1,coords2);
-    let maxMoves=0;
-    let bestMove=[];
-    if (diff[0]>diff[1]){
-        maxMoves=Math.round(diff[0]/2);
-    }else{
-        maxMoves=Math.round(diff[1]/2);
+    let queque=[new Node(start)];
+    let visited= new Set();
+
+    while (queque.length >0){
+        let current= queque.shift() //first queque
+        if (current.coords[0] == end[0] && current.coords[1] ==end[1]){
+            return current.getPath(); // retorno el camino
+        }
+    
+        let moves= posibilites(current.coords);
+        moves.forEach((move)=>{
+        let moveKey= move.toString();
+        if (!visited.has(moveKey)){
+            visited.add(moveKey);
+            queque.push(new Node(move, current)); // Creamos un nodo hijo con el nodo actual como padre
+        }
+        });
     }
-    nearbyCoods.forEach((posibleCoord)=>{
-        let diffPosibilityCord=diffCords(posibleCoord,coords2);
-        if (coords2[0]>diffPosibilityCord[0] && coords2[1]>diffPosibilityCord[1]){
-
-            bestMove.push(posibleCoord);
-        }
-        if(coords2[0]<diffPosibilityCord[0] && coords2[1]<diffPosibilityCord[1])
-        { bestMove.push(posibleCoord);}
-        }
-    );
-    return bestMove;
+    return "No hay camino valido";
 }
 function coordIsValid(coords){
     if (coords[0] >= 0 && coords[0] <= 7 && 
@@ -73,4 +64,4 @@ function posibilites(coords1){
     
     }
 console.log();
-console.log(move([2,2],[1,0]));
+console.log(knightMoves([0, 0], [3, 3]));
